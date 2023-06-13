@@ -1,3 +1,67 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import '../models/response.dart';
+
+class Api {
+  final String key = '2105b7aaa5e5e75ccc7797a3d78c360e';
+
+  Future<Response> getTrendingMovies() async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/trending/movie/day?api_key=$key'));
+    print('response.statusCode ${response.statusCode}');
+    if (response.statusCode == 200) {
+      return Response.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load images');
+    }
+  }
+
+  Future<Response> getSearchMovies(String query) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/search/movie?api_key=$key&query=query'));
+
+    if (response.statusCode == 200) {
+      return Response.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load images');
+    }
+  }
+
+  Future<Response> getDetailsMovies(String id) async {
+    final response = await http
+        .get(Uri.parse('https://api.themoviedb.org/3/movie/$id?api_key=$key'));
+
+    if (response.statusCode == 200) {
+      return Response.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load images');
+    }
+  }
+
+  Future<Response> getCreditsMovies(String id) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$id/credits?api_key=$key'));
+
+    if (response.statusCode == 200) {
+      return Response.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load images');
+    }
+  }
+
+  Future<Response> getReviewsMovies(String id) async {
+    final response = await http.get(Uri.parse(
+        'https://api.themoviedb.org/3/movie/$id/reviews?api_key=$key'));
+
+    if (response.statusCode == 200) {
+      return Response.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load images');
+    }
+  }
+}
+
 // export const getTrendingMovies = async () => {
 //   const data = await axios.get(
 //     `https://api.themoviedb.org/3/trending/movie/day?api_key=2105b7aaa5e5e75ccc7797a3d78c360e&access_token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMTA1YjdhYWE1ZTVlNzVjY2M3Nzk3YTNkNzhjMzYwZSIsInN1YiI6IjY0ODQ0ZGZkZDJiMjA5MDBjYTFmMGNhZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.9I-Q5JNBmL7uanr9Yy2cXFJKfT8QdxGP3W3Xd1CZ0XA`

@@ -1,8 +1,10 @@
+import 'package:fl_movie_finder/screens/favorite.dart';
+import 'package:fl_movie_finder/screens/home.dart';
+import 'package:fl_movie_finder/screens/search.dart';
 import 'package:flutter/material.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,35 +12,64 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xff438e96),
       ),
-      home: const MyHomePage(),
+      home: const ScaffoldWithBottomNavBar(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class ScaffoldWithBottomNavBar extends StatefulWidget {
+  const ScaffoldWithBottomNavBar({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ScaffoldWithBottomNavBar> createState() =>
+      _ScaffoldWithBottomNavBarState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-          ],
-        ),
+      body: IndexedStack(
+        index: _currentIndex,
+        children: const [
+          HomeScreen(),
+          SearchScreen(),
+          FavoriteScreen(),
+        ],
+      ),
+      bottomNavigationBar: SalomonBottomBar(
+        margin: const EdgeInsets.all(16),
+        unselectedItemColor: Colors.white,
+        backgroundColor: const Color(0xff438e96),
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          if (index != _currentIndex) {
+            setState(() => _currentIndex = index);
+          }
+        },
+        items: [
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.home),
+            title: const Text("Home"),
+            selectedColor: Colors.white,
+          ),
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.search),
+            title: const Text("Search"),
+            selectedColor: Colors.white,
+          ),
+          SalomonBottomBarItem(
+            icon: const Icon(Icons.favorite),
+            title: const Text("Favorite"),
+            selectedColor: Colors.white,
+          ),
+        ],
       ),
     );
   }
