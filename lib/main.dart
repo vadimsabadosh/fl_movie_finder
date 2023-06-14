@@ -14,8 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primaryColor: const Color(0xff438e96),
-      ),
+          primaryColor: const Color(0xff438e96),
+          primaryColorLight: const Color.fromARGB(255, 180, 220, 224)),
       home: const ScaffoldWithBottomNavBar(),
     );
   }
@@ -46,7 +46,7 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
       bottomNavigationBar: SalomonBottomBar(
         margin: const EdgeInsets.all(16),
         unselectedItemColor: Colors.white,
-        backgroundColor: const Color(0xff438e96),
+        backgroundColor: Theme.of(context).primaryColor,
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index != _currentIndex) {

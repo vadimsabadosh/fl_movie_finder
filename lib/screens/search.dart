@@ -12,7 +12,7 @@ class SearchScreen extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => const MovieScreen(id: 1),
+                builder: (context) => const MovieScreen(id: 1, title: 'ss'),
               ),
             );
           },
