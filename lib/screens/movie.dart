@@ -1,9 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:fl_movie_finder/models/actors/actor.dart';
 import 'package:flutter/material.dart';
 import '../constants/constants.dart';
+import '../models/actors/actors.dart';
 import '../models/movie_detail/genre.dart';
 import '../models/movie_detail/movie_detail.dart';
 import '../service/api.dart';
+import '../widgets/actors_list.dart';
 
 class MovieScreen extends StatefulWidget {
   final int id;
@@ -21,13 +24,14 @@ class MovieScreen extends StatefulWidget {
 class _MovieScreenState extends State<MovieScreen> {
   final String imgUrl = Constants.imgUrl;
   late MovieDetail movie;
+  List<Actor> actors = [];
   bool isLoading = false;
 
-  void fetchData() {
+  void fetchMovie() {
     setState(() {
       isLoading = true;
     });
-    Future<dynamic> response = Api().getMovieDetails(widget.id);
+    Future<MovieDetail> response = Api().getMovieDetails(widget.id);
     response.then((value) {
       setState(() {
         movie = value;
@@ -39,9 +43,19 @@ class _MovieScreenState extends State<MovieScreen> {
     });
   }
 
+  void fetchActors() {
+    Future<Actors> response = Api().getMovieActors(widget.id);
+    response.then((value) {
+      setState(() {
+        actors = value.actors!;
+      });
+    });
+  }
+
   @override
   void initState() {
-    fetchData();
+    fetchMovie();
+    fetchActors();
     super.initState();
   }
 
@@ -59,67 +73,32 @@ class _MovieScreenState extends State<MovieScreen> {
       ),
       body: ListView(
         children: [
-          Stack(
-            children: <Widget>[
-              Container(
-                width: double.infinity,
-                height: 200,
-                child: Image.network(
-                  '$imgUrl/w500${movie.backdropPath}',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                left: 20,
-                top: 20,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(
-                    '$imgUrl/w200${movie.posterPath}',
-                    height: 160,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 40,
-                bottom: 20,
-                child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 180, 220, 224),
-                        shape: BoxShape.circle),
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: Theme.of(context).primaryColor,
-                      size: 46,
-                    )),
-              ),
-            ],
-          ),
+          _headBanner(),
           Expanded(
-              child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _mainInfo(movie.title.toString(), movie.genres),
-                const SizedBox(height: 20),
-                _generateDetail('Release Date: ',
-                    movie.releaseDate.toString().replaceAll('-', '.')),
-                _generateDetail(
-                    'Average Rating: ', "${(movie.voteAverage! * 10).ceil()}%"),
-                _generateDetail('Time: ', _durationToString(movie.runtime)),
-                const SizedBox(height: 20),
-                const Text('Description',
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 5),
-                Text(movie.overview.toString()),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _mainInfo(movie.title.toString(), movie.genres),
+                  const SizedBox(height: 20),
+                  _generateDetail('Release Date: ',
+                      movie.releaseDate.toString().replaceAll('-', '.')),
+                  _generateDetail('Average Rating: ',
+                      "${(movie.voteAverage! * 10).ceil()}%"),
+                  _generateDetail('Time: ', _durationToString(movie.runtime)),
+                  const SizedBox(height: 20),
+                  const Text('Description',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 5),
+                  Text(movie.overview.toString()),
+                  const SizedBox(height: 20),
+                  if (actors.isNotEmpty) ActorsList(actors: actors)
+                ],
+              ),
             ),
-          ))
+          )
         ],
       ),
     );
@@ -134,6 +113,52 @@ class _MovieScreenState extends State<MovieScreen> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis),
         Text(_convertGenresToString(genres)),
+      ],
+    );
+  }
+
+  Widget _headBanner() {
+    return Stack(
+      children: <Widget>[
+        SizedBox(
+          width: double.infinity,
+          height: 200,
+          child: Image.network(
+            movie.backdropPath != null
+                ? '$imgUrl/w500${movie.backdropPath}'
+                : Constants.noImage,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          left: 20,
+          top: 20,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.network(
+              movie.posterPath != null
+                  ? '$imgUrl/w200${movie.posterPath}'
+                  : Constants.noImage,
+              height: 160,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        Positioned(
+          right: 40,
+          bottom: 20,
+          child: Container(
+              width: 50,
+              height: 50,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 180, 220, 224),
+                  shape: BoxShape.circle),
+              child: Icon(
+                Icons.play_arrow_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 46,
+              )),
+        ),
       ],
     );
   }

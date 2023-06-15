@@ -42,10 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.only(top: 25),
       child: Column(
         children: [
           const Text('Trending Movies',
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
           if (movies.isNotEmpty) MovieList(movies: movies),
         ],

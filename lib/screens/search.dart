@@ -1,24 +1,49 @@
-import 'package:fl_movie_finder/screens/movie.dart';
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatelessWidget {
+import '../models/movie.dart';
+import '../models/response.dart';
+import '../service/api.dart';
+import '../widgets/movie_list.dart';
+import '../widgets/searchbar.dart';
+
+class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
   @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  List<MovieModel> movies = [];
+  bool isLoading = false;
+  void onSubmit(String value) {
+    setState(() {
+      isLoading = true;
+    });
+    Future<Response> response = Api().getSearchMovies(value);
+    response.then((value) {
+      setState(() {
+        movies = value.results;
+      });
+    }).whenComplete(() {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: TextButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const MovieScreen(id: 1, title: 'ss'),
-              ),
-            );
-          },
-          child: const Text('Go to song 2'),
+    return Column(
+      children: [
+        Container(
+          height: 30,
+          width: double.infinity,
+          color: Theme.of(context).primaryColor,
         ),
-      ),
+        SearchBar(onSubmit: onSubmit),
+        if (movies.isNotEmpty) MovieList(movies: movies),
+      ],
     );
   }
 }

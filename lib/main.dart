@@ -35,13 +35,15 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          HomeScreen(),
-          SearchScreen(),
-          FavoriteScreen(),
-        ],
+      body: SafeArea(
+        child: IndexedStack(
+          index: _currentIndex,
+          children: const [
+            HomeScreen(),
+            SearchScreen(),
+            FavoriteScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: SalomonBottomBar(
         margin: const EdgeInsets.all(16),

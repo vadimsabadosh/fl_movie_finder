@@ -28,7 +28,7 @@ class MovieItem extends StatelessWidget {
         child: Image.network(
             movie.posterPath != null
                 ? '$imgUrl${movie.posterPath}'
-                : 'https://joadre.com/wp-content/uploads/2019/02/no-image.jpg',
+                : Constants.noImage,
             fit: BoxFit.cover),
       ),
     );
